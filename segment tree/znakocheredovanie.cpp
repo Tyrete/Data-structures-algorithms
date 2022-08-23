@@ -1,5 +1,5 @@
 
-// знакочередование на отрезке
+// added task from gate_sic "znakocheredovanue"
 
 #include <iostream>
 #include <cstring>
