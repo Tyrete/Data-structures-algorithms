@@ -1,5 +1,5 @@
 
-//https://codeforces.com/edu/course/2/lesson/4/4/practice/contest/274684/problem/A
+//https://codeforces.com/edu/course/2/lesson/4/1/practice/contest/273169/problem/B
 
 #include <iostream>
 #include <cstring>
@@ -20,18 +20,18 @@ struct segtree {
 	int size, ZERO;
 	void init(int n) {
 		size = n;
-		ZERO = 0;
+		ZERO = 2e9;
 		t.resize(4 * size);
 	}
 	void build(int v, int l, int r, vector<int>& a) {
 		if (r - l == 1) {
-			t[v] = a[l] * (l % 2 ? -1 : 1);
+			t[v] = a[l];
 			return;
 		}
 		int m = (l + r) / 2;
 		build(2 * v + 1, l, m, a);
 		build(2 * v + 2, m, r, a);
-		t[v] = t[2 * v + 1] + t[2 * v + 2];
+		t[v] = min(t[2 * v + 1], t[2 * v + 2]);
 	}
 	void build(vector<int>& a) {
 		init(a.size());
@@ -39,26 +39,24 @@ struct segtree {
 	}
 	int get(int l, int r, int v, int tl, int tr) {
 		if (r <= tl || tr <= l) return ZERO;
-		if (l <= tl && tr <= r) {
-			return t[v] * (l % 2 ? -1 : 1);
-		}
+		if (l <= tl && tr <= r) return t[v];
 		int tm = (tl + tr) / 2;
 		int g1 = get(l, r, 2 * v + 1, tl, tm);
 		int g2 = get(l, r, 2 * v + 2, tm, tr);
-		return g1 + g2;
+		return min(g1, g2);
 	}
 	int get(int l, int r) {
 		return get(l, r, 0, 0, size);
 	}
 	void set(int pos, int val, int v, int l, int r) {
 		if (r - l == 1) {
-			t[v] = val * (l % 2 ? -1 : 1);
+			t[v] = val;
 			return;
 		}
 		int m = (l + r) / 2;
 		if (pos < m) set(pos, val, 2 * v + 1, l, m);
 		else set(pos, val, 2 * v + 2, m, r);
-		t[v] = t[2 * v + 1] + t[2 * v + 2];
+		t[v] = min(t[2 * v + 1], t[2 * v + 2]);
 	}
 	void set(int pos, int val) {
 		set(pos, val, 0, 0, size);
